@@ -29,5 +29,10 @@ has "header" => (
     lazy_build => 1,
 );
 
+has 'encode_uri' => (
+     is => 'ro',
+     isa => 'URI::Escape',
+     lazy_build => 1
+);
 
 1;
