@@ -61,21 +61,28 @@ sub _build_json {
 sub get_entry {
 
     my ($self, $dict_id, $word, $format) = @_;
+
+    my $response;
+
     #return an error message unless there is entry_id and dict_id
     return "Dictionary id or Entry id not found" unless $dict_id and $word;
     return "Format allowed is html or xml" unless $format eq 'xml' or $format eq 'html';
+
     $self->user_agent->default_header(accessKey => $self->access_key);
+
     my $uri = $self->base_url;
     $uri .= 'dictionaries/'.$dict_id.'/entries/';
     $uri .=  $word.'/?format=html';
     $uri = $self->encode_uri->encode($uri);
 
-   eval{ my $response = $self->user_agent->get($uri);};
-	if (my $e = $@){
-	die "Could not get response from API $e"; 
-}
+	   eval{ $response = $self->user_agent->get($uri);};
+		if (my $e = $@){
+			die "Could not get response from API $e"; 
+		}
+
     my $content = $self->json->decode($response->content);
-    return $content;
+
+    $content;
 
 }
 
