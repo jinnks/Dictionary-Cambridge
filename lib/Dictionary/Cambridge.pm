@@ -5,6 +5,7 @@ use DDP;
 use HTTP::Request;
 use LWP::UserAgent;
 use URI::Encode;
+use JSON;
 
 has "base_url" =>(
         is => 'ro',
@@ -23,16 +24,16 @@ has "user_agent" => (
     lazy_build => 1
 );
 
-has "http_request" =>(
-    is => 'ro',
-    isa => 'HTTP::Request',
-    lazy_build => 1
-);
-
 has "encode_uri" =>(
     is =>'ro',
     isa => 'URI::Encode',
     lazy_build => 1
+);
+
+has "json" =>(
+     is => 'ro',
+     isa => 'JSON',
+     lazy_build => 1
 );
 
 sub _build_user_agent {
@@ -50,20 +51,31 @@ sub _build_encode_uri {
     return URI::Encode->new();
 }
 
+sub _build_json {
+     
+    return JSON->new();
+
+}
+
+
 sub get_entry {
 
-    my ($self, $dict_id, $entry_id) = @_;
+    my ($self, $dict_id, $word, $format) = @_;
     #return an error message unless there is entry_id and dict_id
-    return "Dictionary id or Entry id not found" unless $dict_id and $entry_id;
+    return "Dictionary id or Entry id not found" unless $dict_id and $word;
+    return "Format allowed is html or xml" unless $format eq 'xml' or $format eq 'html';
     $self->user_agent->default_header(accessKey => $self->access_key);
     my $uri = $self->base_url;
     $uri .= 'dictionaries/'.$dict_id.'/entries/';
-    $uri .=  $entry_id.'/?format=html';
+    $uri .=  $word.'/?format=html';
     $uri = $self->encode_uri->encode($uri);
-    p($uri);
-    print STDERR $uri."\n";
-    my $response = $self->user_agent->get($uri);
-    return $response;
+
+   eval{ my $response = $self->user_agent->get($uri);};
+	if (my $e = $@){
+	die "Could not get response from API $e"; 
+}
+    my $content = $self->json->decode($response->content);
+    return $content;
 
 }
 
