@@ -1,7 +1,6 @@
 package Dictionary::Cambridge;
 
 use Moose;
-use DDP;
 use HTTP::Request;
 use LWP::UserAgent;
 use URI::Encode;
