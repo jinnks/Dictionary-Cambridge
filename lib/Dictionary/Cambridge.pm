@@ -13,9 +13,22 @@ has "base_url" => (
     default => 'https://dictionary.cambridge.org/api/v1/'
 );
 
+has "dictionary" => (
+    is => 'rw',
+    isa => 'Str'
+    required => 1,
+);
+
+has "format" => (
+    is =>' rw',
+    isa => 'Str'
+    default => 'xml',
+);
+
 has "access_key" => (
     is  => 'rw',
     isa => 'Str',
+    required => 1
 );
 
 has "user_agent" => (
@@ -59,14 +72,13 @@ sub _build_json {
 
 sub get_entry {
 
-    my ( $self, $dict_id, $word, $format ) = @_;
+    my ( $self, $word ) = @_;
 
     my $response;
-    my $content;
 
     #return an error message unless there is entry_id and dict_id
-    return "Dictionary id or word not found" unless $dict_id and $word;
-    return "format of the reponse content is required" unless $format;
+    return "Dictionary id or word not found" unless $self->dictionary and $word;
+    return "format of the reponse content is required" unless $self->format;
     return "Format allowed is html or xml"
       unless $format eq 'xml'
       or $format eq 'html';
@@ -74,21 +86,22 @@ sub get_entry {
     $self->user_agent->default_header( accessKey => $self->access_key );
 
     my $uri = $self->base_url;
-    $uri .= 'dictionaries/' . $dict_id . '/entries/';
-    $uri .= $word . '/?format=' . $format;
+    $uri .= 'dictionaries/' . $self->dictionary . '/entries/';
+    $uri .= $word . '/?format=json' . $self->format;
     $uri = $self->encode_uri->encode($uri);
 
     eval { $response = $self->user_agent->get($uri); };
     if ( my $e = $@ ) {
         die "Could not get response from API $e";
     }
+
     if ( $response->is_success and $response->content ) {
-        $content = $self->json->decode( $response->content );
-        $content;
+        my $data = $self->json->decode( $response->content );
+        return $data;
     }
     else {
-        $content = $self->json->decode($response->content);
-        $content->{errorMessage};
+        my $data = $self->json->decode($response->content);
+        die $data->{errorMessage};
     }
 
 }

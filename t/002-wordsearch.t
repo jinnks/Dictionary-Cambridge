@@ -18,6 +18,7 @@ my $word = Dictionary::Cambridge->new(access_key =>
 isa_ok($word, 'Dictionary::Cambridge' );
 can_ok($word, 'get_entry');
 my $meaning = $word->get_entry("british", $meaningful_word, "xml");
+
 is(ref ($meaning) ,'HASH', "Content is a Hashref");
 $meaning = $word->get_entry("british", $not_a_word, "xml");
 is($meaning, "Entry '$not_a_word' not found.", "Correct reply from API");
@@ -32,4 +33,25 @@ is($meaning, "format of the reponse content is required", "Correct replay when f
 
 $meaning = $word->get_entry("british", "$meaningful_word", "json");
 is($meaning, "Format allowed is html or xml", "Correct replay when format param is not xml or html");
+
+
+my $dict - Dictionary::Cambridge->new(
+        dictionary => 'british',
+        access_key => 1234
+    );
+
+my $result = $dict->getEntry( $word );
+
+print $result->topic->Label;
+print $result->topic->ThesaurusName;
+
+my @audios = $result->info->audios;
+for my $audio ( @audios ) {
+    $audio->type;
+    $audio->region;
+    my @sources = $audio->sources;
+    for my $source ( @sources ) {
+        $source->src;
+    }
+}
 
