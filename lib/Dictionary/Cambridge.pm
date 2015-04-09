@@ -6,6 +6,8 @@ use LWP::UserAgent;
 use URI::Encode;
 use JSON;
 use namespace::autoclean;
+use lib "../";
+use Dictionary::Cambridge::Response;
 
 has "base_url" => (
     is      => 'ro',
@@ -15,14 +17,14 @@ has "base_url" => (
 
 has "dictionary" => (
     is => 'rw',
-    isa => 'Str'
-    required => 1,
+    isa => 'Str',
+    required => 1
 );
 
 has "format" => (
     is =>' rw',
-    isa => 'Str'
-    default => 'xml',
+    isa => 'Str',
+    default => 'xml'
 );
 
 has "access_key" => (
@@ -80,8 +82,8 @@ sub get_entry {
     return "Dictionary id or word not found" unless $self->dictionary and $word;
     return "format of the reponse content is required" unless $self->format;
     return "Format allowed is html or xml"
-      unless $format eq 'xml'
-      or $format eq 'html';
+      unless $self->format eq 'xml'
+      or $self->format eq 'html';
 
     $self->user_agent->default_header( accessKey => $self->access_key );
 
@@ -97,7 +99,7 @@ sub get_entry {
 
     if ( $response->is_success and $response->content ) {
         my $data = $self->json->decode( $response->content );
-        return $data;
+        return  Dictionary::Cambridge::Response->new(xml_data => $data);
     }
     else {
         my $data = $self->json->decode($response->content);
