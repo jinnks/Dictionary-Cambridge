@@ -7,7 +7,9 @@ use URI::Encode;
 use JSON;
 use namespace::autoclean;
 use lib "../";
-use Dictionary::Cambridge::Response;
+use DDP;
+
+with 'Dictionary::Cambridge::Response';
 
 has "base_url" => (
     is      => 'ro',
@@ -22,7 +24,7 @@ has "dictionary" => (
 );
 
 has "format" => (
-    is =>' rw',
+    is => 'rw',
     isa => 'Str',
     default => 'xml'
 );
@@ -84,12 +86,11 @@ sub get_entry {
     return "Format allowed is html or xml"
       unless $self->format eq 'xml'
       or $self->format eq 'html';
-
     $self->user_agent->default_header( accessKey => $self->access_key );
 
     my $uri = $self->base_url;
     $uri .= 'dictionaries/' . $self->dictionary . '/entries/';
-    $uri .= $word . '/?format=json' . $self->format;
+    $uri .= $word . '/?format=' . $self->format;
     $uri = $self->encode_uri->encode($uri);
 
     eval { $response = $self->user_agent->get($uri); };
@@ -99,7 +100,8 @@ sub get_entry {
 
     if ( $response->is_success and $response->content ) {
         my $data = $self->json->decode( $response->content );
-        return  Dictionary::Cambridge::Response->new(xml_data => $data);
+        my $hashed_content = $self->parse_xml($data->{entryContent});
+        p($hashed_content);
     }
     else {
         my $data = $self->json->decode($response->content);
