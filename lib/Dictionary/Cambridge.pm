@@ -101,7 +101,6 @@ sub get_entry {
     if ( $response->is_success and $response->content ) {
         my $data = $self->json->decode( $response->content );
         my $hashed_content = $self->parse_xml($data->{entryContent});
-        p($hashed_content);
     }
     else {
         my $data = $self->json->decode($response->content);
