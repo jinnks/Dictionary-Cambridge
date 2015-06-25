@@ -18,9 +18,9 @@
 	Entity for common typographic elements, e.g. superscript, fractions, etc.
 -->
 
-<!ENTITY % typog "b|cl|lab|i|sub|sup|fr" > 
+<!ENTITY % typog "b|cl|lab|i|sub|sup|fr" >
 
-<!-- 
+<!--
 	STRUCTURE ELEMENTS
 	
 	These elements divide up the senses/definitions. Which ones are present depend on the dataset. 
