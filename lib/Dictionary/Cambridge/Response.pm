@@ -25,12 +25,15 @@ sub parse_xml {
     my @pos_blocks = $doc->findnodes( '//di/pos-block' );
     for my $pos_block (@pos_blocks) {
         my $pos = $pos_block->findvalue( './header/info/posgram/pos' );
-        my @defs = $pos_block->findnodes( './sense-block/def-block/definition' );
-        foreach my $def (@defs){
-            my @meaning = $def->findvalue('./def');
-            p(@meaning);
-}
-}
+        my @defs = $pos_block->findnodes( './sense-block/def-block' );
+        for my $d( @defs ) {
+            my $def = $d->findvalue('./definition/def');
+            my @eg = map { $_->string_value() } $d->findnodes('./examp/eg');
+            push @{$definition{$pos}},{"definition" => $def, "example" => \@eg};
+        }
+
+    }
+    p(%definition);
 }
 1;
 

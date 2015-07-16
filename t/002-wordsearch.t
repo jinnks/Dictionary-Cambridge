@@ -7,7 +7,7 @@ use Test::More tests=>3;
 use lib "./lib";
 use DDP;
 
-my $meaningful_word = "test";
+my $meaningful_word = "interest";
 my $not_a_word      = "sdfkljsdflsdkj";
 use_ok( 'Dictionary::Cambridge' );
 
