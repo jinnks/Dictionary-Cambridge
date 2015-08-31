@@ -1,7 +1,6 @@
 package Dictionary::Cambridge::Response;
 
 use Moose::Role;
-use DDP;
 use XML::LibXML;
 use namespace::autoclean;
 use List::MoreUtils qw( zip );
@@ -21,7 +20,6 @@ sub parse_xml {
     my $doc = $self->xml->load_xml( string => $xml_data );
     my %definition = ();
 
-    print $doc->toString(2), "\n";
     my @pos_blocks = $doc->findnodes( '//di/pos-block' );
     for my $pos_block (@pos_blocks) {
         my $pos = $pos_block->findvalue( './header/info/posgram/pos' );
@@ -33,25 +31,6 @@ sub parse_xml {
         }
 
     }
-    p(%definition);
+    return \%definition;
 }
 1;
-
-__DATA__
-
-{
-    noun => {
-    definition => "defi"
-}
-
-my $result = $dict->lookup('telephone');
-
-p($result);
-
-for my ??? ( $result->???? ) {
-    for my $definition ( ???->definitions ) {
-        print $definition->text;
-        for my $example ( $definition->examples ) {
-        }
-    }
-}

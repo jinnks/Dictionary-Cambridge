@@ -7,7 +7,6 @@ use URI::Encode;
 use JSON;
 use namespace::autoclean;
 use lib "../";
-use DDP;
 
 with 'Dictionary::Cambridge::Response';
 
@@ -79,7 +78,7 @@ sub get_entry {
     my ( $self, $word ) = @_;
 
     my $response;
-
+    my $hashed_content;
     #return an error message unless there is entry_id and dict_id
     return "Dictionary id or word not found" unless $self->dictionary and $word;
     return "format of the reponse content is required" unless $self->format;
@@ -100,13 +99,13 @@ sub get_entry {
 
     if ( $response->is_success and $response->content ) {
         my $data = $self->json->decode( $response->content );
-        my $hashed_content = $self->parse_xml($data->{entryContent});
+        $hashed_content = $self->parse_xml($data->{entryContent});
     }
     else {
         my $data = $self->json->decode($response->content);
-        die $data->{errorMessage};
+         return $data->{errorMessage};
     }
-
+    $hashed_content;
 }
 __PACKAGE__->meta->make_immutable;
 1;
