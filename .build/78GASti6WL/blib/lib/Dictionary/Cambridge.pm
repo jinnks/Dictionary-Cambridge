@@ -1,7 +1,5 @@
 package Dictionary::Cambridge;
-# ABSTRACT: A simple module for the Cambridge Dictionary API, only implemented
-# one method to get an entry (meaning of a word from the dictionary)
-
+# ABSTRACT: turns baubles into trinkets
 use Moose;
 use HTTP::Request;
 use LWP::UserAgent;
