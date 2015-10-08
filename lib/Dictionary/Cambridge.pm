@@ -8,7 +8,6 @@ use LWP::UserAgent;
 use URI::Encode;
 use JSON;
 use namespace::autoclean;
-use lib "../";
 
 with 'Dictionary::Cambridge::Response';
 
@@ -75,6 +74,25 @@ sub _build_json {
 
 }
 
+=head1 SYNOPSIS
+
+ use Dictionary::Cambridge
+
+   my $dictionary = Dictionary::Cambridge->new(
+    access_key => $ENV{ACCESS_KEY},
+    dictionary => 'british',
+    format     => 'xml'
+);
+
+ my $meaning = $dictionary->get_entry("test");
+
+=head1 DESCRIPTION
+
+    A simple module to interact with Cambridge Dictionary API, this module will only be able to get the meaning of the words
+    and their relevant examples if they exist. Also this is my first release so please be patient on mistake and errors.
+
+=cut
+
 sub get_entry {
 
     my ( $self, $word ) = @_;
@@ -101,7 +119,7 @@ sub get_entry {
 
     if ( $response->is_success and $response->content ) {
         my $data = $self->json->decode( $response->content );
-        $hashed_content = $self->parse_xml($data->{entryContent});
+        $hashed_content = $self->parse_xml_def_eg($data->{entryContent});
     }
     else {
         my $data = $self->json->decode($response->content);
@@ -109,5 +127,11 @@ sub get_entry {
     }
     $hashed_content;
 }
+=head1 SEE ALSO
+
+L<http://dictionary-api.cambridge.org/api/resources>
+
+=cut
+
 __PACKAGE__->meta->make_immutable;
 1;

@@ -1,4 +1,6 @@
 package Dictionary::Cambridge::Response;
+#ABSTRACT: the roles to parse different part of the xml returned
+
 
 use Moose::Role;
 use XML::LibXML;
@@ -15,7 +17,7 @@ sub _build_xml {
     return XML::LibXML->new();
 }
 
-sub parse_xml {
+sub parse_xml_def_eg {
     my ( $self, $xml_data ) = @_;
     my $doc = $self->xml->load_xml( string => $xml_data );
     my %definition = ();
