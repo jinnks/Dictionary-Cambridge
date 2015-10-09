@@ -93,6 +93,10 @@ sub _build_json {
 
 =cut
 
+=head2 METHODS
+    get_entry
+    params: word to get the meaning of
+=cut
 sub get_entry {
 
     my ( $self, $word ) = @_;
