@@ -17,6 +17,11 @@ sub _build_xml {
     return XML::LibXML->new();
 }
 
+=head2 METHODS
+    parse_xml_def_eg
+    params: xml content of the API get_entry call
+=cut
+
 sub parse_xml_def_eg {
     my ( $self, $xml_data ) = @_;
     my $doc = $self->xml->load_xml( string => $xml_data );
